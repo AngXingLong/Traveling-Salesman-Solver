@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Complex Polylines</title>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script src='qrc:///qtwebchannel/qwebchannel.js'></script>
+    <script>
+      
+      var backEnd = null;
+
+      window.onload = function () { 
+        new QWebChannel(qt.webChannelTransport, function (channel) {
+          backEnd = channel.objects.handler;
+          backEnd.onready();
+      });
+    }
+      
+      var directionsService;
+      var directionsDisplay;
+
+      var poly;
+      var map = null;
+      var marker;
+      var markers = [];
+      var coordinates = [
+          {lat: 1.320270, lng: 103.861959, content:"node 1"},
+          {lat: 1.350270, lng: 103.851959, content:"node 2"},
+          {lat: 1.350270, lng: 103.821959, content:"node 3"}
+        ];
+
+      
+      
+      function setCoordinates(jsonString){
+        coordinates = jsonString;
+      }
+
+      function updateCoordinates(jsonString){
+        setCoordinates(jsonString)
+        clearMarkers();
+        setPolyLines();
+        setMarkers();
+      }
+
+      function setPolyLines(){
+
+        // Clear existing polylines
+        if (poly != undefined){
+            poly.setMap(null);
+        }
+
+        poly = new google.maps.Polyline({
+            path: coordinates,
+            strokeColor: '#000000',
+            strokeOpacity: 1.0,
+            strokeWeight: 3
+        });
+
+        poly.setMap(map);
+
+      }
+
+      var infoWindows = [];
+
+      function setMarkers(){
+
+        var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        var labelIndex = 0;
+
+        for (i = 0; i < coordinates.length; i++) { 
+
+            let infowindow = new google.maps.InfoWindow({
+              content: coordinates[i]["content"]
+            }); 
+            let marker = new google.maps.Marker({
+                position: new google.maps.LatLng(coordinates[i]["lat"], coordinates[i]["lng"]),
+                label: labels[labelIndex++ % labels.length],
+                map: map,
+                animation: google.maps.Animation.DROP
+            });
+
+            infoWindows.push(infowindow);
+
+            //infowindow.open(map, marker);
+
+            marker.addListener('mouseover', function() {
+              infowindow.open(map, marker);
+            });
+
+            marker.addListener('mouseout', function() {
+              infowindow.close();
+            });
+            markers.push(marker);
+        }
+      }
+
+      function closeAllInfoWindows() {
+        for (var i=0;i<infoWindows.length;i++) {
+          infoWindows[i].close();
+        }
+      }
+        
+
+
+      function clearPolyLines(){
+        if (poly != undefined){
+            poly.setMap(null);
+        }
+      }
+
+      function clearMarkers(){
+        for (var i = 0; i < markers.length; i++) {
+          markers[i].setMap(null);
+        }  
+      }
+
+      function initMap() {
+
+        
+        directionsService = new google.maps.DirectionsService();
+        directionsDisplay = new google.maps.DirectionsRenderer();
+
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 12,
+          center: {lat: 1.350270, lng: 103.851959} 
+        });
+        //directionsDisplay.setMap(map);
+        //setMarkers()
+        //setPolyLines()
+      }
+
+      function clearDisplayRoute(){
+        if (directionsDisplay != null) {
+          directionsDisplay.setMap(null);
+        }
+      } 
+
+      function calculateAndDisplayRoute() {
+
+        var waypts = [];
+
+        for (var i = 1; i < coordinates.length-1; i++) {
+            waypts.push({
+              location: new google.maps.LatLng(coordinates[i]["lat"], coordinates[i]["lng"]),
+              stopover: true
+            });
+        }
+  
+        directionsService.route({
+          origin: new google.maps.LatLng(coordinates[0]["lat"], coordinates[0]["lng"]),
+          destination: new google.maps.LatLng(coordinates[coordinates.length-1]["lat"], coordinates[coordinates.length-1]["lng"]),
+          waypoints: waypts,
+          optimizeWaypoints: true,
+          travelMode: 'DRIVING'
+        }, function(response, status) {
+          if (status === 'OK') {
+            directionsDisplay.setDirections(response);
+          } 
+          else {
+            window.alert('Directions request failed due to ' + status);
+          }
+        });
+        clearMarkers()
+        clearPolyLines()
+      }
+
+
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap">
+    </script>
+    
+  </body>
+</html>
