@@ -7,8 +7,9 @@ Application Poster: https://github.com/AngXingLong/Traveling-Salesman-Solver/blo
 Video: https://youtu.be/ildlIHgU_m8
 
 
-
 **Requirements**
+
+
 This project requires pthyon 3 and requires the libraries as listed
 
 | Library | Version |
