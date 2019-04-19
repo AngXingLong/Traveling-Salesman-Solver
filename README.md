@@ -1,6 +1,8 @@
 # Traveling Salesman Solver
 
-The TSP is a problem that asks for the most efficient trajectory possible given a set of points and distances that must all be visited. The application contains 4 algorithms that is able to provide users with a visual representation on how the algorithms traverse through the nodes to find the optimal route. Additionally, the application is also able display the time taken and results.
+The TSP is a problem that asks for the most efficient trajectory possible given a set of points and distances that must all be visited. This is useful in resolving logistical issues such as route optimtation that can aid in reducing time to deliver and fuel consumption.
+
+The application contains 4 algorithms that is able to provide users with a visual representation on how the algorithms traverse through the nodes to find the optimal route. Additionally, the application is also able display the time taken and results.
 
 ### Application Preview
 Poster: https://github.com/AngXingLong/Traveling-Salesman-Solver/blob/master/Poster.pdf
