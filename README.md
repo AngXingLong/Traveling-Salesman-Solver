@@ -8,7 +8,7 @@ Video: https://youtu.be/ildlIHgU_m8
 
 
 #### Requirements
-This project requires pthyon 3 and requires the libraries as listed
+This project requires pthyon 3 and requires the libraries as listed.
 
 | Library | Version |
 | --- | --- |
